@@ -17,5 +17,11 @@ def burgers_data_loss(predicted, target):
     # Relative L2 Loss
     # Predicted: (B, Nx, Nt)
     # Target: (B, Nx, Nt)
-    # TODO
-    pass
+    err = predicted - target
+    err_norm = torch.linalg.vector_norm(err)
+    target_norm = torch.linalg.vector_norm(target)
+
+    batch_loss = err_norm / target_norm.clamp_min(1e-12) #avoid 0 division, shape (B,)
+
+    loss = batch_loss.mean() #() single value
+    return loss
